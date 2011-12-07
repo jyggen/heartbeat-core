@@ -1,0 +1,16 @@
+*~
+*.bak
+Thumbs.db
+desktop.ini
+.DS_Store
+.buildpath
+.project
+.settings
+.tmpoj
+cache/*/*/*
+nbproject/
+.idea
+public/.htpasswd
+public/assets/files.min.css
+public/assets/files.min.js
+public/assets/minify.sfv
