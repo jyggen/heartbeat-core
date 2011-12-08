@@ -109,7 +109,8 @@ protected static $_instance = false;
 	
 			$template = $this->_engine->loadTemplate($template.'.twig');
 			$output   = $template->render($this->_vars);
-	
+			ob_end_clean();
+
 		} catch (Exception $e) {
 			
 			ob_end_clean();
