@@ -66,7 +66,7 @@ protected static $_instance = false;
 
 				if (array_key_exists('file', $value) === true) {
 
-					$file = str_replace(ROOT, '', $value['file']);
+					$file = str_replace(DIR_ROOT, '', $value['file']);
 					$bto .= ' in <strong>'.$file.'</strong>';
 
 				} else {
