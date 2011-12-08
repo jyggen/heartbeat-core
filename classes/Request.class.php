@@ -136,8 +136,8 @@ class Request
 		}
 
 		$model   = Database::getInstance();
-		$id      = generateId(self::$id, true, false, $table);
-		$reverse = generateId($id, false, false, $table);
+		$id      = Num::obfuscate(self::$id, true, false, $table);
+		$reverse = Num::obfuscate($id, false, false, $table);
 
 		if (self::$id !== $reverse) {
 
