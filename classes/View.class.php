@@ -28,11 +28,11 @@ protected static $_instance = false;
 			
 			Twig_Autoloader::register();
 			
-			$this->_loader = new Twig_Loader_Filesystem(PATH_APP.'views'.DIRECTORY_SEPARATOR);
+			$this->_loader = new Twig_Loader_Filesystem(PATH_APP.'views');
 			$this->_engine = new Twig_Environment(
 				$this->_loader,
 				array(
-				 'cache' => PATH_APP.'cache'.DIRECTORY_SEPARATOR,
+				 'cache' => PATH_APP.'cache',
 				 'debug' => DEBUG,
 				 'strict_variables' => true,
 				)
