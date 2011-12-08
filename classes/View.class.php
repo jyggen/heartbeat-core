@@ -108,10 +108,11 @@ protected static $_instance = false;
 		try {
 	
 			$template = $this->_engine->loadTemplate($template.'.twig');
-			#$output   = $template->render($this->_vars);
+			$output   = $template->render($this->_vars);
 	
-		} catch (Twig_Error $e) {
-
+		} catch (Exception $e) {
+			
+			ob_end_clean();
 			throw new Exception($e->getMessage());
 	
 		}
