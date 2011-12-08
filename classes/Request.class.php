@@ -413,7 +413,7 @@ class Request
 		try {
 			
 			// If we have our own main controller, we should use it.
-			if(is_defined('OVERRIDE_CONTROLLER') === true) {
+			if(defined('OVERRIDE_CONTROLLER') === true) {
 				
 				$controller = OVERRIDE_CONTROLLER;
 			
