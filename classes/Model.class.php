@@ -200,7 +200,7 @@ abstract class Model
 	public function getObfuscatedId()
 	{
 
-		return generateId($this->_id, false, false, $this->_structure['table']);
+		return Num::obfuscate($this->_id, false, false, $this->_structure['table']);
 
 	}
 
