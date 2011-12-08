@@ -7,10 +7,5 @@ desktop.ini
 .project
 .settings
 .tmpoj
-cache/*/*/*
 nbproject/
 .idea
-public/.htpasswd
-public/assets/files.min.css
-public/assets/files.min.js
-public/assets/minify.sfv
