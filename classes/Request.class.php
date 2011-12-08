@@ -147,7 +147,7 @@ class Request
 		$model = Database::getInstance();
 		
 		// Make sure the ID exists in the DB.
-		if ($model->recordExistsInDB($table, array('id' => $id)) === false) {
+		if ($model->recordExistsInDB($table, array('id' => self::$id)) === false) {
 			
 			// Return 404.
 			self::serveNotFound();
@@ -161,7 +161,7 @@ class Request
 				WHERE id = ?
 				LIMIT 1';
 
-		$data = $model->query($sql, array($id), true);
+		$data = $model->query($sql, array(self::$id), true);
 		
 		// Generate an URL slug based upon it.
 		$slug = Str::slug($data['slug']);
