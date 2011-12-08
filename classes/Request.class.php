@@ -340,7 +340,7 @@ class Request
 
 	}
 
-	static protected function backtrace()
+	static public function backtrace()
 	{
 
 		$bto       = '';
