@@ -46,11 +46,7 @@ class Controller
 		$this->_view->addGlobal('session', $session);
 		$this->_view->addGlobal('system', SYSTEM);
 		$this->_view->addGlobal('version', VERSION);
-		$this->_view->addGlobal('token', getGUID());
-
-		$this->_view->define('latestUsers', $latest);
-		$this->_view->define('topUsers', UserModel::getTopUsers());
-		$this->_view->define('links', Minify::getLinks());
+		$this->_view->addGlobal('token', Str::guid());
 
 		self::$_instance = $this;
 
