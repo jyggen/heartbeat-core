@@ -105,17 +105,21 @@ protected static $_instance = false;
 	
 		}
 
+		try {
 	
 			$template = $this->_engine->loadTemplate($template.'.twig');
 			$output   = $template->render($this->_vars);
 			
-			// Fixed issue with template crashing.
+			// Fixes an issue with Twig and invalid function calls within views.
 			ob_end_clean();
 			
 			print $output;
+			
+		} catch (Exception $e) {
 
-
-		//echo $output;
+			throw new Exception($e->getMessage());
+	
+		}
 	
 	}
 	
