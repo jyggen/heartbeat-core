@@ -105,7 +105,6 @@ protected static $_instance = false;
 	
 		}
 
-		try {
 	
 			$template = $this->_engine->loadTemplate($template.'.twig');
 			$output   = $template->render($this->_vars);
@@ -114,13 +113,7 @@ protected static $_instance = false;
 			ob_end_clean();
 			
 			print $output;
-			
-		} catch (Exception $e) {
-			
-			trigger_error('PEEEEEEEEEEEEEEEEENA', E_USER_ERROR);
-			throw new Exception($e->getMessage());
-	
-		}
+
 
 		//echo $output;
 	
