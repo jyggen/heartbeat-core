@@ -69,7 +69,7 @@ class Request
 			// If any arguments are supplied in the request, save them!
 			if (isset($path[2]) === true) {
 				
-				foreach($args => $val) {
+				foreach($args as $val) {
 				
 					$args[] = $val;
 				
