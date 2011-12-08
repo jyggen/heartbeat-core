@@ -100,7 +100,7 @@ protected static $_instance = false;
 
 		if ($template === false) {
 	
-			$name = substr(Request::$controller, 0, -10);
+			$name     = substr(Request::$controller, 0, -10);
 			$template = strtolower($name.'_'.Request::$method);
 	
 		}
@@ -108,7 +108,7 @@ protected static $_instance = false;
 		try {
 	
 			$template = $this->_engine->loadTemplate($template.'.twig');
-			$output = $template->render($this->_vars);
+			$output   = $template->render($this->_vars);
 	
 		} catch (Exception $e) {
 	
@@ -116,6 +116,7 @@ protected static $_instance = false;
 	
 		}
 		
+		echo $template;
 		echo $output;
 	
 	}
