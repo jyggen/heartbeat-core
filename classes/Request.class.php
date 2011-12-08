@@ -433,7 +433,7 @@ class Request
 				
 				// Developer friendly message with backtrace.
 				$msg  = '<p>'.$messages['debug'].'</p>';
-				$msg .= '<p><u>Backtrace</u>:'."\n".self::backtrace().'</p>';
+				$msg .= '<pre><u>Backtrace</u>:'."\n".self::backtrace().'</pre>';
 
 				$view->define('errorMsg', $msg);
 			
