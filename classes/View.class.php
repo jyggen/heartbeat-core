@@ -23,66 +23,7 @@ protected static $_instance = false;
 
 	public function __construct()
 	{
-		
-		$bto       = '';
-		$backtrace = debug_backtrace();
-		$ignore    = array(
-		              'Request::backtrace()',
-		              'trigger_error()',
-		              'Request::serveErrorPage()',
-		              'Request::error()',
-    				  'Request::errorHandler()',
-		             );
 
-		ksort($backtrace);
-
-		foreach ($backtrace as $key => $value) {
-
-			if (array_key_exists('class', $value) === true) {
-
-				$call = $value['class'].'::';
-
-			} else {
-
-				$call = '';
-
-			}
-
-			$call .= $value['function'].'()';
-
-			if (in_array($call, $ignore) === false) {
-
-				$bto .= '<strong>'.$call.'</strong>';
-
-				if (array_key_exists('line', $value) === true) {
-
-					$bto .= ' called on line '.$value['line'];
-
-				} else {
-
-					$bto .= '';
-
-				}
-
-				if (array_key_exists('file', $value) === true) {
-
-					$file = str_replace(DIR_ROOT, '', $value['file']);
-					$bto .= ' in <strong>'.$file.'</strong>';
-
-				} else {
-
-					$bto .= '';
-
-				}
-
-				$bto .= "\n";
-
-			}//end if
-
-		}//end foreach
-
-		exit($bto);
-		
 		try {
 			
 			Twig_Autoloader::register();

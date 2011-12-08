@@ -385,7 +385,7 @@ class Request
 
 				if (array_key_exists('file', $value) === true) {
 
-					$file = str_replace(ROOT, '', $value['file']);
+					$file = str_replace(PATH_ROOT, '', $value['file']);
 					$bto .= ' in <strong>'.$file.'</strong>';
 
 				} else {
