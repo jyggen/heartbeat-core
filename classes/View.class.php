@@ -97,13 +97,16 @@ protected static $_instance = false;
 
 	public function render($template=false)
 	{
-
+		
 		if ($template === false) {
 	
 			$name     = substr(Request::$controller, 0, -10);
 			$template = strtolower($name.'_'.Request::$method);
 	
 		}
+	
+		print $template;
+		die;
 	
 		try {
 	
