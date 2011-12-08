@@ -98,6 +98,8 @@ protected static $_instance = false;
 	public function render($template=false)
 	{
 
+		echo $template;
+	
 		if ($template === false) {
 	
 			$name     = substr(Request::$controller, 0, -10);
@@ -115,8 +117,7 @@ protected static $_instance = false;
 			throw new Exception($e->getMessage());
 	
 		}
-		
-		echo $template;
+
 		echo $output;
 	
 	}
