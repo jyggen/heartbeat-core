@@ -40,10 +40,10 @@ class Controller
 		$this->session = Str::htmlEntities($_SESSION);
 		$this->session = Arr::keyToCamel($this->session);
 
-		$this->_view->addGlobal('server', &$this->server);
-		$this->_view->addGlobal('get', &$this->get);
-		$this->_view->addGlobal('post', &$this->post);
-		$this->_view->addGlobal('session', &$this->session);
+		$this->_view->addGlobal('server', $this->server);
+		$this->_view->addGlobal('get', $this->get);
+		$this->_view->addGlobal('post', $this->post);
+		$this->_view->addGlobal('session', $this->session);
 		$this->_view->addGlobal('system', SYSTEM);
 		$this->_view->addGlobal('version', VERSION);
 		$this->_view->addGlobal('token', Str::guid());
