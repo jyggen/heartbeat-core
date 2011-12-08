@@ -36,7 +36,7 @@ if(function_exists('import') === false) {
 
 }
 
-import('jyggen-s-php-libraries/Database.class', 'libraries');
+import('jyggen/Database.class', 'libraries');
 import('Twig/Autoloader', 'libraries');
 
 Database::$settings['hostname'] = DB_HOSTNAME;
