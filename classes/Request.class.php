@@ -36,7 +36,8 @@ class Request
 
 				// Set request controller to the requested controller.
 				self::$controller = ucfirst($path[0]).'Controller';
-
+				unset($path[0]);
+				
 			// Otherwise.
 			} else {
 
@@ -50,6 +51,7 @@ class Request
 
 				// Set request method to the requested method.
 				self::$method = $path[1];
+				unset($path[1]);
 
 			// Otherwise.
 			} else {
@@ -62,11 +64,16 @@ class Request
 			// Defaults.
 			self::$slug = null;
 			self::$id   = null;
-
+			$args       = array();
+			
 			// If any arguments are supplied in the request, save them!
 			if (isset($path[2]) === true) {
-
-				$args = $path[2];
+				
+				foreach($args => $val) {
+				
+					$args[] = $val;
+				
+				}
 
 			// Otherwise null 'em!
 			} else {
@@ -78,19 +85,18 @@ class Request
 			// If arguments were supplied.
 			if ($args !== null) {
 
-				// Split the argument and save w/e the first key is as the slug.
-				$args       = explode('.', $args);
-				self::$slug = $args[0];
+				// Save the first argument as the ID.
+				self::$id = $args[0];
 
-				// If we have a second argument (after the dot), save it as the ID.
+				// If we have a second argument, save it as the slug.
 				if (isset($args[1]) === true) {
 
-					self::$id = $args[1];
+					self::$slug = $args[1];
 
-				// Otherwise, set ID to null.
+				// Otherwise, set slug to null.
 				} else {
 
-					self::$id = null;
+					self::$slug = null;
 
 				}
 
