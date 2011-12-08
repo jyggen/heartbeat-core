@@ -400,7 +400,7 @@ class Request
 		// Let's try to display the error in-site.
 		try {
 			
-			// If we have our own main controller, we should use it.
+			// If we have our own main controller we should use it.
 			if(defined('OVERRIDE_CONTROLLER') === true) {
 				
 				$controller = OVERRIDE_CONTROLLER;
@@ -436,7 +436,7 @@ class Request
 			// Render error view.
 			$view->render('error');
 		
-		// In case something went wrong with the abouve code;
+		// In case something went wrong with the above code;
 		} catch (Exception $e) {
 			
 			// Create a new view object.

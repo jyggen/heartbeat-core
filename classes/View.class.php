@@ -110,13 +110,13 @@ protected static $_instance = false;
 			$template = $this->_engine->loadTemplate($template.'.twig');
 			$output = $template->render($this->_vars);
 	
-			echo $output;
-	
 		} catch (Exception $e) {
 	
 			throw new Exception($e->getMessage());
 	
 		}
+		
+		echo $output;
 	
 	}
 	
