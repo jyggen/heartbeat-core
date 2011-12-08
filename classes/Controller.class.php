@@ -47,10 +47,7 @@ class Controller
 		$this->_view->addGlobal('system', SYSTEM);
 		$this->_view->addGlobal('version', VERSION);
 		$this->_view->addGlobal('token', Str::guid());
-		
-		echo 'qweqweqwe:'.Request::backtrace();
-		echo '<hr>';
-		
+
 		self::$_instance =& $this;
 
 	}
