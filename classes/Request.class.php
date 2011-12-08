@@ -412,8 +412,20 @@ class Request
 		// Let's try to display the error in-site.
 		try {
 			
-			// Retrieve the current controller and view.
-			$controller = Controller::getInstance();
+			// If we have our own main controller, we should use it.
+			if(is_defined('OVERRIDE_CONTROLLER') === true) {
+				
+				$controller = OVERRIDE_CONTROLLER;
+			
+			// Otherwise, roll with heartbeat default.
+			} else {
+				
+				$controller = 'Controller';
+				
+			}
+			
+			// Retrieve the controller and view.
+			$controller = $controller::getInstance();
 			$view       = View::getInstance();
 			
 			// Debug mode?
