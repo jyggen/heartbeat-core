@@ -83,7 +83,7 @@ class Request
 			}
 
 			// If arguments were supplied.
-			if ($args !== null) {
+			if (empty($args) === false) {
 
 				// Save the first argument as the ID.
 				self::$id = $args[0];
