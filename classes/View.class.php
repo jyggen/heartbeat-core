@@ -104,23 +104,19 @@ protected static $_instance = false;
 			$template = strtolower($name.'_'.Request::$method);
 	
 		}
-	
-		print $template;
-		die;
-	
+
 		try {
 	
 			$template = $this->_engine->loadTemplate($template.'.twig');
 			$output   = $template->render($this->_vars);
 	
 		} catch (Exception $e) {
-			
-			die('penna');
+
 			throw new Exception($e->getMessage());
 	
 		}
 
-		echo $output;
+		//echo $output;
 	
 	}
 	
