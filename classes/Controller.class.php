@@ -1,19 +1,17 @@
 <?php
-class View
+class Controller
 {
 
-protected $_loader;
-protected $_engine;
-protected $_vars = array();
+	protected $_view;
+	protected static $_instance = false;
 
-protected static $_instance = false;
-	
 	public static function getInstance()
 	{
-	
+
 		if (self::$_instance === false) {
 
-			self::$_instance = new self();
+			$class = get_called_class();
+			self::$_instance = new $class;
 
 		}
 
@@ -24,98 +22,38 @@ protected static $_instance = false;
 	public function __construct()
 	{
 
-		try {
+		$this->_view = View::getInstance();
 
-			$this->_loader = new Twig_Loader_Filesystem(TEMPLATE_DIR);
-			$this->_engine = new Twig_Environment(
-				$this->_loader,
-				array(
-				 'cache' => CACHE_DIR,
-				 'debug' => DEBUG,
-				 'strict_variables' => true,
-				)
-			);
+		$server = array();
+		$server = Str::htmlEntities($_SERVER);
+		$server = Arr::keyToCamel($server);
 
-		} catch (Exception $e) {
+		$get = array();
+		$get = Str::htmlEntities($_GET);
+		$get = Arr::keyToCamel($get);
 
-			Request::serveErrorPage($e->getMessage());
+		$post = array();
+		$post = Str::htmlEntities($_POST);
+		$post = Arr::keyToCamel($post);
 
-		}
+		$session = array();
+		$session = Str::htmlEntities($_SESSION);
+		$session = Arr::keyToCamel($session);
 
-	}
+		$this->_view->addGlobal('server', $server);
+		$this->_view->addGlobal('get', $get);
+		$this->_view->addGlobal('post', $post);
+		$this->_view->addGlobal('session', $session);
+		$this->_view->addGlobal('system', SYSTEM);
+		$this->_view->addGlobal('version', VERSION);
+		$this->_view->addGlobal('token', getGUID());
 
-	public function addFilter($name, $function)
-	{
+		$this->_view->define('latestUsers', $latest);
+		$this->_view->define('topUsers', UserModel::getTopUsers());
+		$this->_view->define('links', Minify::getLinks());
 
-		try {
-
-			$this->_engine->addFilter(
-				$name,
-				$obj = new Twig_Filter_Function($function)
-			);
-
-		} catch (Exception $e) {
-
-			Request::serveErrorPage($e->getMessage());
-
-		}
+		self::$_instance = $this;
 
 	}
 
-	public function addGlobal($name, $var)
-	{
-
-		try {
-
-			$this->_engine->addGlobal($name, $var);
-
-		} catch (Exception $e) {
-
-			Request::serveErrorPage($e->getMessage());
-
-		}
-
-	}
-
-	public function define($key, $var)
-	{
-
-		if (array_key_exists($key, $this->_vars) === false) {
-
-			$this->_vars[$key] = $var;
-
-		} else {
-
-			trigger_error('"'.$key.'" is already defined', E_USER_ERROR);
-			exit(1);
-
-		}
-
-	}
-
-	public function render($template=false)
-	{
-
-		if ($template === false) {
-	
-			$name = substr(Request::$controller, 0, -10);
-			$template = strtolower($name.'_'.Request::$method);
-	
-		}
-	
-		try {
-	
-			$template = $this->_engine->loadTemplate($template.'.twig');
-			$output = $template->render($this->_vars);
-	
-			echo $output;
-	
-		} catch (Exception $e) {
-	
-			throw new Exception($e->getMessage());
-	
-		}
-	
-	}
-	
 }
