@@ -2,7 +2,7 @@
 class Num
 {
 
-	function obfuscate($string, $toId=false, $minLength=false, $password=null)
+	static public function obfuscate($string, $toId=false, $minLength=false, $password=null)
 	{
 
 		$index = 'bcdfghjklmnpqrstvwxz023456789BCDFGHJKLMNPQRSTVWXZ';
