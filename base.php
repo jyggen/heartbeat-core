@@ -38,6 +38,7 @@ if (function_exists('import') === false) {
 
 import('jyggen/Database.class', 'libraries');
 import('Twig/Autoloader', 'libraries');
+import('phpass/PasswordHash', 'libraries');
 
 Database::$settings['hostname'] = DB_HOSTNAME;
 Database::$settings['username'] = DB_USERNAME;
