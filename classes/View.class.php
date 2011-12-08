@@ -111,12 +111,12 @@ protected static $_instance = false;
 			$output   = $template->render($this->_vars);
 	
 		} catch (Exception $e) {
-	
+			
+			die('penna');
 			throw new Exception($e->getMessage());
 	
 		}
-		
-		echo 'yo';
+
 		echo $output;
 	
 	}
