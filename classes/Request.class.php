@@ -293,53 +293,6 @@ class Request
 
 	}
 
-	static protected function error($messages)
-	{
-
-		try {
-
-			$controller = Controller::getInstance();
-			$view       = View::getInstance();
-
-			if (DEBUG === false) {
-
-				$view->define('errorMsg', '<p>'.$messages['normal'].'</p>');
-
-			} else {
-
-				$msg  = '<p>'.$messages['debug'].'</p>';
-				$msg .= '<pre><u>Backtrace</u>:'."\n".self::backtrace().'</pre>';
-
-				$view->define('errorMsg', $msg);
-
-			}
-
-			$view->render('error');
-
-		} catch (Exception $e) {
-
-			$view = new View;
-
-			if (DEBUG === false) {
-
-				$view->define('errorMsg', '<p>'.$messages['normal'].'</p>');
-
-			} else {
-
-				$msg  = '<p>'.$messages['debug'].'</p>';
-				$msg .= '<pre><u>Backtrace</u>:'."\n".self::backtrace()."\n";
-				$msg .= '<u>Template Engine</u>:'."\n".$e->getMessage().'</pre>';
-
-				$view->define('errorMsg', $msg);
-
-			}
-
-			$view->render('error_simple');
-
-		}//end try
-
-	}
-
 	static public function backtrace()
 	{
 
@@ -403,5 +356,52 @@ class Request
 		return $bto;
 
 	}
+	
+	static protected function error($messages)
+	{
 
+		try {
+
+			$controller = Controller::getInstance();
+			$view       = View::getInstance();
+
+			if (DEBUG === false) {
+
+				$view->define('errorMsg', '<p>'.$messages['normal'].'</p>');
+
+			} else {
+
+				$msg  = '<p>'.$messages['debug'].'</p>';
+				$msg .= '<pre><u>Backtrace</u>:'."\n".self::backtrace().'</pre>';
+
+				$view->define('errorMsg', $msg);
+
+			}
+
+			$view->render('error');
+
+		} catch (Exception $e) {
+
+			$view = new View;
+
+			if (DEBUG === false) {
+
+				$view->define('errorMsg', '<p>'.$messages['normal'].'</p>');
+
+			} else {
+
+				$msg  = '<p>'.$messages['debug'].'</p>';
+				$msg .= '<pre><u>Backtrace</u>:'."\n".self::backtrace()."\n";
+				$msg .= '<u>Template Engine</u>:'."\n".$e->getMessage().'</pre>';
+
+				$view->define('errorMsg', $msg);
+
+			}
+
+			$view->render('error_simple');
+
+		}//end try
+
+	}
+	
 }
