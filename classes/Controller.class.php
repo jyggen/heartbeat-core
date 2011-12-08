@@ -11,6 +11,7 @@ class Controller
 		if (self::$_instance === false) {
 
 			$class = get_called_class();
+			echo $class;
 			self::$_instance = new $class;
 
 		}
