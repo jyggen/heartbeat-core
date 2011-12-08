@@ -49,7 +49,7 @@ class Controller
 		$this->_view->addGlobal('version', VERSION);
 		$this->_view->addGlobal('token', Str::guid());
 		
-		Request::backtrace();
+		echo Request::backtrace();
 		
 		self::$_instance =& $this;
 
