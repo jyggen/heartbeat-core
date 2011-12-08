@@ -109,12 +109,15 @@ protected static $_instance = false;
 	
 			$template = $this->_engine->loadTemplate($template.'.twig');
 			$output   = $template->render($this->_vars);
+			
+			// Fixed issue with template crashing.
 			ob_end_clean();
 			
 			print $output;
 			
 		} catch (Exception $e) {
-
+			
+			trigger_error('PEEEEEEEEEEEEEEEEENA', E_USER_ERROR);
 			throw new Exception($e->getMessage());
 	
 		}
