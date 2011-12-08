@@ -11,7 +11,6 @@ class Controller
 		if (self::$_instance === false) {
 
 			$class = get_called_class();
-			echo $class;
 			self::$_instance = new $class;
 
 		}
@@ -49,7 +48,8 @@ class Controller
 		$this->_view->addGlobal('version', VERSION);
 		$this->_view->addGlobal('token', Str::guid());
 		
-		echo Request::backtrace();
+		echo 'qweqweqwe:'.Request::backtrace();
+		echo '<hr>';
 		
 		self::$_instance =& $this;
 
