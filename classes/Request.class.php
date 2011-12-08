@@ -146,19 +146,6 @@ class Request
 		// Get database.
 		$model = Database::getInstance();
 		
-		// Deobfuscate the ID and then obfuscate it back.
-		$id      = Num::obfuscate(self::$id, true, false, $table);
-		$reverse = Num::obfuscate($id, false, false, $table);
-		
-		// Make sure the ID is reversable.
-		if (self::$id !== $reverse) {
-			
-			// Return 404 with debug message.
-			self::serveNotFound('forged ID detected');
-			exit(1);
-
-		}
-		
 		// Make sure the ID exists in the DB.
 		if ($model->recordExistsInDB($table, array('id' => $id)) === false) {
 			
@@ -184,9 +171,9 @@ class Request
 		if ($slug !== self::$slug) {
 			
 			// Replace the invalid slug with the correct version.
-			$suf  = preg_quote(self::$slug.'.'.self::$id);
+			$suf  = preg_quote(self::$id.'/'.self::$slug);
 			$path = $_SERVER['PATH_INFO'];
-			$url  = preg_replace('/'.$suf.'/', $slug.'.'.self::$id, $path);
+			$url  = preg_replace('/'.$suf.'/', self::$id.'/'.$slug, $path);
 			
 			// Redirect to the correct URL.
 			self::redirect($url, true);
