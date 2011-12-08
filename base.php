@@ -15,20 +15,20 @@ if (DEBUG === false) {
 
 }
 
-if(function_exists('import') === false) {
+if (function_exists('import') === false) {
 
 	function import($path, $folder='classes')
 	{
 	
 		$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
 		
-		if(is_file(PATH_APP.$folder.DIRECTORY_SEPARATOR.$path.'.php')) {
+		if (is_file(PATH_APP.$folder.DIRECTORY_SEPARATOR.$path.'.php') === true) {
 			
-			require_once PATH_APP.$folder.DIRECTORY_SEPARATOR.$path.'.php';
+			include_once PATH_APP.$folder.DIRECTORY_SEPARATOR.$path.'.php';
 			
 		} else {
 		
-			require_once PATH_CORE.$folder.DIRECTORY_SEPARATOR.$path.'.php';		
+			include_once PATH_CORE.$folder.DIRECTORY_SEPARATOR.$path.'.php';		
 		
 		}
 
