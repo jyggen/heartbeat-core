@@ -70,7 +70,7 @@ class Str
 
 	}
 	
-	static public function slug($str, $separator='dash', $lowercase=false)
+	static public function slug($str, $separator='dash', $lowercase=true)
 	{
 	
 		if ($separator == 'dash') {
