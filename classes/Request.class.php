@@ -66,6 +66,8 @@ class Request
 			self::$id   = null;
 			$args       = array();
 			
+			print_r($path);
+			
 			// If any arguments are supplied in the request, save them!
 			if (isset($path[2]) === true) {
 				
