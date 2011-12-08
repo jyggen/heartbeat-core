@@ -127,64 +127,88 @@ class Request
 
 	static public function validate($table, $slugField)
 	{
-
+		
+		// If no ID or slug is defined there's nothing to validate!
 		if (self::$id === null || self::$slug === null) {
-
+			
+			// Return 404.
 			self::serveNotFound();
 			exit(1);
 
 		}
-
-		$model   = Database::getInstance();
+		
+		// Get database.
+		$model = Database::getInstance();
+		
+		// Deobfuscate the ID and then obfuscate it back.
 		$id      = Num::obfuscate(self::$id, true, false, $table);
 		$reverse = Num::obfuscate($id, false, false, $table);
-
+		
+		// Make sure the ID is reversable.
 		if (self::$id !== $reverse) {
-
+			
+			// Return 404 with debug message.
 			self::serveNotFound('forged ID detected');
 			exit(1);
 
 		}
-
+		
+		// Make sure the ID exists in the DB.
 		if ($model->recordExistsInDB($table, array('id' => $id)) === false) {
-
+			
+			// Return 404.
 			self::serveNotFound();
 			exit(1);
 
 		}
-
+		
+		// Retrive the supplied field from the DB.
 		$sql = 'SELECT `'.$slugField.'`
 				AS slug FROM `'.$table.'`
 				WHERE id = ?
 				LIMIT 1';
 
 		$data = $model->query($sql, array($id), true);
+		
+		// Generate an URL slug based upon it.
 		$slug = Str::slug($data['slug']);
-
+		
+		
+		// Make sure the slugs matches.
 		if ($slug !== self::$slug) {
-
+			
+			// Replace the invalid slug with the correct version.
 			$suf  = preg_quote(self::$slug.'.'.self::$id);
 			$path = $_SERVER['PATH_INFO'];
 			$url  = preg_replace('/'.$suf.'/', $slug.'.'.self::$id, $path);
-
+			
+			// Redirect to the correct URL.
 			self::redirect($url, true);
 			exit();
+		
+		// Else update self::$id to the deobfuscated ID.
+		} else {
 
+			self::$id = $id;
+		
 		}
 
-		self::$id = $id;
-
 	}
-
+	
+	// This method depends on a third-party model and should be removed.
 	static public function restrict($adminOnly=false)
 	{
-
+		
+		// If this page requires admin and the client isn't an admin. 
 		if ($adminOnly === true && UserModel::userIsAdmin() === false) {
-
+			
+			// Return 401.
 			self::serveUnauthorized();
-
+		
+		// Else, verify that we're logged in!
 		} else if (UserModel::userIsLoggedIn() === false) {
-
+			
+			// Return 401.
 			self::serveUnauthorized();
 
 		}
@@ -193,13 +217,15 @@ class Request
 
 	static public function redirect($url, $sendThreeZeroOne=false)
 	{
-
+		
+		// Send 301 Moved Permanently if requested, otherwise PHP will send 302 Found.
 		if ($sendThreeZeroOne === true) {
 
 			header($_SERVER['SERVER_PROTOCOL'].' 301 Moved Permanently');
 
 		}
-
+		
+		// Redirect the client.
 		header('Location: '.$url);
 		exit();
 
@@ -207,12 +233,14 @@ class Request
 
 	static public function errorHandler($errno, $errstr, $errfile, $errline)
 	{
-
+		
+		// Error message.
 		$err  = $errno;
 		$err  = $errstr.'</p>';
 		$err .= '<p>on line <strong>'.$errline.'</strong>';
 		$err .= ' in <strong>'.$errfile.'</strong>';
-
+		
+		// Serve an error page.
 		self::serveErrorPage($err);
 		exit(1);
 
@@ -220,15 +248,19 @@ class Request
 
 	static public function serveErrorPage($msg)
 	{
-
+		
+		// Protocol version (i.e. HTTP/1.0).
 		$protocol = $_SERVER['SERVER_PROTOCOL'];
-
+		
+		// Send 503 Service Temporarily Unavailable.
 		header($protocol.' 503 Service Temporarily Unavailable');
 		header('Status: 503 Service Temporarily Unavailable');
 		header('Retry-After: 3600');
-
+		
+		// Friendly error message (should be localizable!).
 		$err = 'Ett oväntat fel har uppstått, var god försök igen senare.';
-
+		
+		// Send it to the error template handler.
 		self::error(
 			array(
 			 'normal' => $err,
@@ -242,20 +274,25 @@ class Request
 
 	static public function serveNotFound($msg='404 Not Found')
 	{
-
+		
+		// Server protocol (i.e. HTTP/1.0) and the requested URI.
 		$protocol = $_SERVER['SERVER_PROTOCOL'];
 		$request  = $_SERVER['REQUEST_URI'];
-
+		
+		// Return 404 Not Found.
 		header($protocol.' 404 Not Found');
 		header('Status: 404 Not Found');
-
+		
+		// Friendly output, should be localizable in the future! 
 		$err  = 'Sidan <strong>'.$request.'</strong> kunde inte hittas. ';
 		$err .= 'Kontrollera att du skrivit rätt i ';
 		$err .= 'adressfältet och försök igen.';
-
+		
+		// Debug output.
 		$debug  = SYSTEM.' returned <strong>'.$msg.'</strong> ';
 		$debug .= 'on <strong>'.$request.'</strong>.';
-
+		
+		// Send it to the error template handler.
 		self::error(
 			array(
 			 'normal' => $err,
@@ -266,22 +303,27 @@ class Request
 		exit(0);
 
 	}
-
+	
 	static public function serveUnauthorized($msg='401 Unauthorized')
 	{
 
+		// Server protocol (i.e. HTTP/1.0) and the requested URI.
 		$protocol = $_SERVER['SERVER_PROTOCOL'];
 		$request  = $_SERVER['REQUEST_URI'];
 
+		// Return 401 Unauthorized.
 		header($protocol.' 401 Unauthorized');
 		header('Status: 401 Unauthorized');
 
+		// Friendly output, should be localizable in the future! 
 		$err  = 'Du nekas tillträde till <strong>'.$request.'</strong>. ';
 		$err .= 'Kontrollera att du är inloggad och försök igen.';
 
+		// Debug output.
 		$debug  = SYSTEM.' returned <strong>'.$msg.'</strong> ';
 		$debug .= 'on <strong>'.$request.'</strong>.';
 
+		// Send it to the error template handler.
 		self::error(
 			array(
 			 'normal' => $err,
@@ -293,111 +335,134 @@ class Request
 
 	}
 
-	static public function backtrace()
+	static protected function backtrace()
 	{
-
+		
+		// PHP backtrace.
 		$bto       = '';
 		$backtrace = debug_backtrace();
-		$ignore    = array(
-		              'Request::backtrace()',
-		              'trigger_error()',
-		              'Request::serveErrorPage()',
-		              'Request::error()',
-    				  'Request::errorHandler()',
-		             );
-
+		
+		// Calls to ignore/strip.
+		$ignore = array(
+		           'Request::backtrace()',
+		           'trigger_error()',
+		           'Request::serveErrorPage()',
+		           'Request::error()',
+    			   'Request::errorHandler()',
+		          );
+		
+		// Should it already be in the correct order?
 		ksort($backtrace);
-
+		
+		// For each in the backtrace.
 		foreach ($backtrace as $key => $value) {
-
+			
+			// Is this a class call? Prepend the class name!
 			if (array_key_exists('class', $value) === true) {
 
 				$call = $value['class'].'::';
-
+			
+			// Otherwise leave it blank.
 			} else {
 
 				$call = '';
 
 			}
-
+			
+			// Add the name of the method and () for the looks.
 			$call .= $value['function'].'()';
-
+			
+			// Unless this call should be skipped;
 			if (in_array($call, $ignore) === false) {
-
+				
+				// Add it to the backtrace output.
 				$bto .= '<strong>'.$call.'</strong>';
-
+				
+				// If there's a line number in the backtrace, append it!
 				if (array_key_exists('line', $value) === true) {
 
 					$bto .= ' called on line '.$value['line'];
 
-				} else {
-
-					$bto .= '';
-
 				}
-
+				
+				// If there's a filename in the backtrace, append it!
 				if (array_key_exists('file', $value) === true) {
 
 					$file = str_replace(PATH_ROOT, '', $value['file']);
 					$bto .= ' in <strong>'.$file.'</strong>';
 
-				} else {
-
-					$bto .= '';
-
 				}
-
+				
+				// Add a linebreak, should usd PHP_EOL though.
 				$bto .= "\n";
 
 			}//end if
 
 		}//end foreach
-
+		
+		
+		// Return the backtrace output.
 		return $bto;
 
 	}
 	
 	static protected function error($messages)
 	{
-
+		
+		// Let's try to display the error in-site.
 		try {
-
+			
+			// Retrieve the current controller and view.
 			$controller = Controller::getInstance();
 			$view       = View::getInstance();
-
-			if (DEBUG === false) {
-
-				$view->define('errorMsg', '<p>'.$messages['normal'].'</p>');
-
-			} else {
-
+			
+			// Debug mode?
+			if (DEBUG === true) {
+				
+				// Developer friendly message with backtrace.
 				$msg  = '<p>'.$messages['debug'].'</p>';
 				$msg .= '<pre><u>Backtrace</u>:'."\n".self::backtrace().'</pre>';
 
 				$view->define('errorMsg', $msg);
-
-			}
-
-			$view->render('error');
-
-		} catch (Exception $e) {
-
-			$view = new View;
-
-			if (DEBUG === false) {
-
+			
+			// Otherwise;
+			} else {
+				
+				// User friendly message.
 				$view->define('errorMsg', '<p>'.$messages['normal'].'</p>');
 
-			} else {
-
+			}
+			
+			// Render error view.
+			$view->render('error');
+		
+		// In case something went wrong with the abouve code;
+		} catch (Exception $e) {
+			
+			// Create a new view object.
+			$view = new View;
+			
+			// Debug mode?
+			if (DEBUG === true) {
+				
+				// Developer friendly message with backtrace.
 				$msg  = '<p>'.$messages['debug'].'</p>';
 				$msg .= '<pre><u>Backtrace</u>:'."\n".self::backtrace()."\n";
+				
+				// Also display why in-site rendering failed.
 				$msg .= '<u>Template Engine</u>:'."\n".$e->getMessage().'</pre>';
 
 				$view->define('errorMsg', $msg);
+			
+			// Otherwise;
+			} else {
+				
+				// User friendly message.
+				$view->define('errorMsg', '<p>'.$messages['normal'].'</p>');
 
 			}
-
+			
+			// Render a simplified error page.
 			$view->render('error_simple');
 
 		}//end try
