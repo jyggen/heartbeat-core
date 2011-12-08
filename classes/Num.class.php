@@ -2,7 +2,12 @@
 class Num
 {
 
-	static public function obfuscate($string, $toId=false, $minLength=false, $password=null)
+	static public function obfuscate(
+		$string,
+		$toId=false,
+		$minLength=false,
+		$password=null
+	)
 	{
 
 		$index = 'bcdfghjklmnpqrstvwxz023456789BCDFGHJKLMNPQRSTVWXZ';
@@ -46,8 +51,8 @@ class Num
 
 			for ($t = 0; $t <= $length; $t++) {
 
-				$bcpow  = bcpow($base, ($length - $t));
-				$result = ($result + (strpos($index, substr($string, $t, 1)) * $bcpow));
+				$bcpow   = bcpow($base, ($length - $t));
+				$result += (strpos($index, substr($string, $t, 1)) * $bcpow);
 
 			}
 
