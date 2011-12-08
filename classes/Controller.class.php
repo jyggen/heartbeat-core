@@ -24,26 +24,26 @@ class Controller
 
 		$this->_view = View::getInstance();
 
-		$server = array();
-		$server = Str::htmlEntities($_SERVER);
-		$server = Arr::keyToCamel($server);
+		$this->server = array();
+		$this->server = Str::htmlEntities($_SERVER);
+		$this->server = Arr::keyToCamel($this->server);
 
-		$get = array();
-		$get = Str::htmlEntities($_GET);
-		$get = Arr::keyToCamel($get);
+		$this->get = array();
+		$this->get = Str::htmlEntities($_GET);
+		$this->get = Arr::keyToCamel($this->get);
 
-		$post = array();
-		$post = Str::htmlEntities($_POST);
-		$post = Arr::keyToCamel($post);
+		$this->post = array();
+		$this->post = Str::htmlEntities($_POST);
+		$this->post = Arr::keyToCamel($this->post);
 
-		$session = array();
-		$session = Str::htmlEntities($_SESSION);
-		$session = Arr::keyToCamel($session);
+		$this->session = array();
+		$this->session = Str::htmlEntities($_SESSION);
+		$this->session = Arr::keyToCamel($this->session);
 
-		$this->_view->addGlobal('server', $server);
-		$this->_view->addGlobal('get', $get);
-		$this->_view->addGlobal('post', $post);
-		$this->_view->addGlobal('session', $session);
+		$this->_view->addGlobal('server', &$this->server);
+		$this->_view->addGlobal('get', &$this->get);
+		$this->_view->addGlobal('post', &$this->post);
+		$this->_view->addGlobal('session', &$this->session);
 		$this->_view->addGlobal('system', SYSTEM);
 		$this->_view->addGlobal('version', VERSION);
 		$this->_view->addGlobal('token', Str::guid());
