@@ -108,9 +108,9 @@ protected static $_instance = false;
 		try {
 	
 			$template = $this->_engine->loadTemplate($template.'.twig');
-			$output   = $template->render($this->_vars);
+			#$output   = $template->render($this->_vars);
 	
-		} catch (Exception $e) {
+		} catch (Twig_Error $e) {
 
 			throw new Exception($e->getMessage());
 	
