@@ -159,7 +159,7 @@ class Request
 				LIMIT 1';
 
 		$data = $model->query($sql, array($id), true);
-		$slug = strSlug($data['slug']);
+		$slug = Str::slug($data['slug']);
 
 		if ($slug !== self::$slug) {
 
