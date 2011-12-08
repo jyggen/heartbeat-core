@@ -69,7 +69,7 @@ class Request
 			// If any arguments are supplied in the request, save them!
 			if (isset($path[2]) === true) {
 				
-				foreach($args as $val) {
+				foreach($path as $val) {
 				
 					$args[] = $val;
 				
@@ -81,8 +81,6 @@ class Request
 				$args = null;
 
 			}
-			
-			print_r($args);
 
 			// If arguments were supplied.
 			if (empty($args) === false) {
