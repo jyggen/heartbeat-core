@@ -178,12 +178,7 @@ class Request
 			// Redirect to the correct URL.
 			self::redirect($url, true);
 			exit();
-		
-		// Else update self::$id to the deobfuscated ID.
-		} else {
 
-			self::$id = $id;
-		
 		}
 
 	}
