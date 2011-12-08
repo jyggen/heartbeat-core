@@ -32,8 +32,8 @@ protected static $_instance = false;
 			$this->_engine = new Twig_Environment(
 				$this->_loader,
 				array(
-				 'cache' => PATH_APP.'cache',
-				 'debug' => DEBUG,
+				 'cache'            => PATH_APP.'cache',
+				 'debug'            => DEBUG,
 				 'strict_variables' => true,
 				)
 			);
