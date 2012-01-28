@@ -111,7 +111,7 @@ class Request
 		// If requested controller doesn't exist, throw 404.
 		if (class_exists(self::$controller) === false) {
 
-			self::serveNotFound('"'.self::$controller.'" not found');
+			self::serveNotFound('Controller "'.self::$controller.'" not found');
 			exit(1);
 
 		}
@@ -119,7 +119,7 @@ class Request
 		// If requested method doesn't exist in the controller, throw 404.
 		if (is_callable(array(self::$controller, self::$method)) === false) {
 
-			self::serveNotFound('"'.self::$method.'" not found');
+			self::serveNotFound('Method "'.self::$method.'" not found');
 			exit(1);
 
 		}
