@@ -32,7 +32,7 @@ class Request
 			$path = explode('/', substr($_SERVER['PATH_INFO'], 1));
 
 			// If a controller is requested (should be unless domain root).
-			if (isset($path[0]) === true) {
+			if (isset($path[0]) === true && empty($path[0]) === false) {
 
 				// Set request controller to the requested controller.
 				self::$controller = ucfirst($path[0]).'Controller';
