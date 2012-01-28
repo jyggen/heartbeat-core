@@ -26,8 +26,6 @@ protected static $_instance = false;
 
 		try {
 			
-			Twig_Autoloader::register();
-			
 			$this->_loader = new Twig_Loader_Filesystem(PATH_APP.'views');
 			$this->_engine = new Twig_Environment(
 				$this->_loader,
