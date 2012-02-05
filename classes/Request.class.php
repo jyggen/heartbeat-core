@@ -6,7 +6,83 @@ class Request
 	static public $id;
 	static public $controller;
 	static public $method;
+	static public $url;
+	
+	static public function uri()
+	{
+	
+		if (static::$uri !== null) {
 
+			return static::$uri;
+
+		}
+		
+		// We want to use PATH_INFO if we can.
+		if (!empty($_SERVER['PATH_INFO'])) {
+		
+			$uri = $_SERVER['PATH_INFO'];
+		
+		}
+		
+		// Only use ORIG_PATH_INFO if it contains the path
+		elseif ( ! empty($_SERVER['ORIG_PATH_INFO']) and ($path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['ORIG_PATH_INFO'])) != '')
+		{
+			$uri = $path;
+		}
+		else
+		{
+			// Fall back to parsing the REQUEST URI
+			if (isset($_SERVER['REQUEST_URI']))
+			{
+				$uri = $_SERVER['REQUEST_URI'];
+			}
+			else
+			{
+				throw new Exception('Unable to detect the URI.');
+			}
+
+			// Remove the base URL from the URI
+			$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
+			if ($uri != '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
+			{
+				$uri = substr($uri, strlen($base_url));
+			}
+
+			// If we are using an index file (not mod_rewrite) then remove it
+			$index_file = \Config::get('index_file');
+			if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
+			{
+				$uri = substr($uri, strlen($index_file));
+			}
+
+			// When index.php? is used and the config is set wrong, lets just
+			// be nice and help them out.
+			if ($index_file and strncmp($uri, '?/', 2) === 0)
+			{
+				$uri = substr($uri, 1);
+			}
+
+			// Lets split the URI up in case it contains a ?.  This would
+			// indicate the server requires 'index.php?' and that mod_rewrite
+			// is not being used.
+			preg_match('#(.*?)\?(.*)#i', $uri, $matches);
+
+			// If there are matches then lets set set everything correctly
+			if ( ! empty($matches))
+			{
+				$uri = $matches[1];
+				$_SERVER['QUERY_STRING'] = $matches[2];
+				parse_str($matches[2], $_GET);
+			}
+		}
+
+
+		static::$uri = $uri;
+
+		return static::$uri;
+	
+	}
+	
 	static public function route()
 	{
 
@@ -18,7 +94,7 @@ class Request
 		}
 
 		// If no path is supplied (eg. domain root).
-		if (isset($_SERVER['PATH_INFO']) === false) {
+		if (self::uri() === '/') {
 
 			self::$controller = 'IndexController';
 			self::$method     = 'index';
@@ -29,7 +105,7 @@ class Request
 		} else {
 
 			// Split path by folder.
-			$path = explode('/', substr($_SERVER['PATH_INFO'], 1));
+			$path = explode('/', substr(self::uri(), 1));
 
 			// If a controller is requested (should be unless domain root).
 			if (isset($path[0]) === true && empty($path[0]) === false) {
@@ -172,7 +248,7 @@ class Request
 			
 			// Replace the invalid slug with the correct version.
 			$suf  = preg_quote(self::$id.'/'.self::$slug);
-			$path = $_SERVER['PATH_INFO'];
+			$path = self::uri();
 			$url  = preg_replace('/'.$suf.'/', self::$id.'/'.$slug, $path);
 			
 			// Redirect to the correct URL.
