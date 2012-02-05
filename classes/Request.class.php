@@ -6,7 +6,7 @@ class Request
 	static public $id;
 	static public $controller;
 	static public $method;
-	static public $url;
+	static public $uri;
 	
 	static public function uri()
 	{
