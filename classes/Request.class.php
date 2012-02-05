@@ -42,7 +42,7 @@ class Request
 			}
 
 			// Remove the base URL from the URI
-			$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
+			$base_url = parse_url(null, PHP_URL_PATH);
 			if ($uri != '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
 			{
 				$uri = substr($uri, strlen($base_url));
