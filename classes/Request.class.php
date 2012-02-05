@@ -49,7 +49,7 @@ class Request
 			}
 
 			// If we are using an index file (not mod_rewrite) then remove it
-			$index_file = \Config::get('index_file');
+			$index_file = false;
 			if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
 			{
 				$uri = substr($uri, strlen($index_file));
