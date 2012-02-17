@@ -7,23 +7,24 @@ class Request
 	static public $controller;
 	static public $method;
 	static public $uri;
-	
+	static public $routes;
+
 	static public function uri()
 	{
-	
+
 		if (static::$uri !== null) {
 
 			return static::$uri;
 
 		}
-		
+
 		// We want to use PATH_INFO if we can.
 		if (!empty($_SERVER['PATH_INFO'])) {
-		
+
 			$uri = $_SERVER['PATH_INFO'];
-		
+
 		}
-		
+
 		// Only use ORIG_PATH_INFO if it contains the path
 		elseif ( ! empty($_SERVER['ORIG_PATH_INFO']) and ($path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['ORIG_PATH_INFO'])) != '')
 		{
@@ -80,9 +81,9 @@ class Request
 		static::$uri = $uri;
 
 		return static::$uri;
-	
+
 	}
-	
+
 	static public function route()
 	{
 
@@ -93,94 +94,119 @@ class Request
 
 		}
 
+		$override = false;
+
 		// If no path is supplied (eg. domain root).
-		if (self::uri() === '/') {
+		if(empty(self::$routes) === false) {
 
-			self::$controller = 'IndexController';
-			self::$method     = 'index';
-			$args             = null;
-			self::$slug       = null;
-			self::$id         = null;
+			foreach(self::$routes as $route => $target) {
 
-		} else {
+				if(preg_match('/' . $route . '/', self::uri())) {
 
-			// Split path by folder.
-			$path = explode('/', substr(self::uri(), 1));
+					$override         = true;
+					self::$controller = 'IndexController';
+					self::$method     = 'index';
+					$args             = null;
+					self::$slug       = null;
+					self::$id         = null;
 
-			// If a controller is requested (should be unless domain root).
-			if (isset($path[0]) === true && empty($path[0]) === false) {
-
-				// Set request controller to the requested controller.
-				self::$controller = ucfirst($path[0]).'Controller';
-				unset($path[0]);
-				
-			// Otherwise.
-			} else {
-
-				// Set request controller to the default (IndexController).
-				self::$controller = 'IndexController';
-
-			}
-
-			// If a method is requested.
-			if (isset($path[1]) === true) {
-
-				// Set request method to the requested method.
-				self::$method = $path[1];
-				unset($path[1]);
-
-			// Otherwise.
-			} else {
-
-				// Set request method to the default (index).
-				self::$method = 'index';
-
-			}
-
-			// Defaults.
-			self::$slug = null;
-			self::$id   = null;
-			$args       = array();
-			
-			// If any arguments are supplied in the request, save them!
-			if (isset($path[2]) === true) {
-				
-				foreach($path as $val) {
-				
-					$args[] = $val;
-				
 				}
 
-			// Otherwise null 'em!
-			} else {
-
-				$args = null;
-
 			}
 
-			// If arguments were supplied.
-			if (empty($args) === false) {
+		}
 
-				// Save the first argument as the ID.
-				self::$id = $args[0];
+		if($override === false) {
 
-				// If we have a second argument, save it as the slug.
-				if (isset($args[1]) === true) {
+			if (self::uri() === '/') {
 
-					self::$slug = $args[1];
+				self::$controller = 'IndexController';
+				self::$method     = 'index';
+				$args             = null;
+				self::$slug       = null;
+				self::$id         = null;
 
-				// Otherwise, set slug to null.
+			} else {
+
+				// Split path by folder.
+				$path = explode('/', substr(self::uri(), 1));
+
+				// If a controller is requested (should be unless domain root).
+				if (isset($path[0]) === true && empty($path[0]) === false) {
+
+					// Set request controller to the requested controller.
+					self::$controller = ucfirst($path[0]).'Controller';
+					unset($path[0]);
+
+				// Otherwise.
 				} else {
 
-					self::$slug = null;
+					// Set request controller to the default (IndexController).
+					self::$controller = 'IndexController';
 
 				}
 
-			}
+				// If a method is requested.
+				if (isset($path[1]) === true) {
 
-			// Unset a few vars. Kinda needlessly, but we don't need them anyway.
-			unset($args);
-			unset($path);
+					// Set request method to the requested method.
+					self::$method = $path[1];
+					unset($path[1]);
+
+				// Otherwise.
+				} else {
+
+					// Set request method to the default (index).
+					self::$method = 'index';
+
+				}
+
+				// Defaults.
+				self::$slug = null;
+				self::$id   = null;
+				$args       = array();
+
+				// If any arguments are supplied in the request, save them!
+				if (isset($path[2]) === true) {
+
+					foreach($path as $val) {
+
+						$args[] = $val;
+
+					}
+
+				// Otherwise null 'em!
+				} else {
+
+					$args = null;
+
+				}
+
+				// If arguments were supplied.
+				if (empty($args) === false) {
+
+					// Save the first argument as the ID.
+					self::$id = $args[0];
+
+					// If we have a second argument, save it as the slug.
+					if (isset($args[1]) === true) {
+
+						self::$slug = $args[1];
+
+					// Otherwise, set slug to null.
+					} else {
+
+						self::$slug = null;
+
+					}
+
+				}
+
+				// Unset a few vars. Kinda needlessly, but we don't need them anyway.
+				unset($args);
+				unset($path);
+
+			}//end if
 
 		}//end if
 
@@ -209,28 +235,28 @@ class Request
 
 	static public function validate($table, $slugField)
 	{
-		
+
 		// If no ID or slug is defined there's nothing to validate!
 		if (self::$id === null || self::$slug === null) {
-			
+
 			// Return 404.
 			self::serveNotFound();
 			exit(1);
 
 		}
-		
+
 		// Get database.
 		$model = Database::getInstance();
-		
+
 		// Make sure the ID exists in the DB.
 		if ($model->recordExistsInDB($table, array('id' => self::$id)) === false) {
-			
+
 			// Return 404.
 			self::serveNotFound();
 			exit(1);
 
 		}
-		
+
 		// Retrive the supplied field from the DB.
 		$sql = 'SELECT `'.$slugField.'`
 				AS slug FROM `'.$table.'`
@@ -238,19 +264,19 @@ class Request
 				LIMIT 1';
 
 		$data = $model->query($sql, array(self::$id), true);
-		
+
 		// Generate an URL slug based upon it.
 		$slug = Str::slug($data['slug']);
-		
-		
+
+
 		// Make sure the slugs matches.
 		if ($slug !== self::$slug) {
-			
+
 			// Replace the invalid slug with the correct version.
 			$suf  = preg_quote(self::$id.'/'.self::$slug);
-			$path = self::uri();
+			$path = $_SERVER['PATH_INFO'];
 			$url  = preg_replace('/'.$suf.'/', self::$id.'/'.$slug, $path);
-			
+
 			// Redirect to the correct URL.
 			self::redirect($url, true);
 			exit();
@@ -258,20 +284,20 @@ class Request
 		}
 
 	}
-	
+
 	// This method depends on a third-party model and should be removed.
 	static public function restrict($adminOnly=false)
 	{
-		
-		// If this page requires admin and the client isn't an admin. 
+
+		// If this page requires admin and the client isn't an admin.
 		if ($adminOnly === true && UserModel::userIsAdmin() === false) {
-			
+
 			// Return 401.
 			self::serveUnauthorized();
-		
+
 		// Else, verify that we're logged in!
 		} else if (UserModel::userIsLoggedIn() === false) {
-			
+
 			// Return 401.
 			self::serveUnauthorized();
 
@@ -281,14 +307,14 @@ class Request
 
 	static public function redirect($url, $sendThreeZeroOne=false)
 	{
-		
+
 		// Send 301 Moved Permanently if requested, otherwise PHP will send 302 Found.
 		if ($sendThreeZeroOne === true) {
 
 			header($_SERVER['SERVER_PROTOCOL'].' 301 Moved Permanently');
 
 		}
-		
+
 		// Redirect the client.
 		header('Location: '.$url);
 		exit();
@@ -297,40 +323,60 @@ class Request
 
 	static public function errorHandler($errno, $errstr, $errfile, $errline)
 	{
-		
+
 		// Error message.
 		$err  = $errno;
 		$err  = $errstr.'</p>';
 		$err .= '<p>on line <strong>'.$errline.'</strong>';
 		$err .= ' in <strong>'.$errfile.'</strong>';
-		
+
 		// Serve an error page.
 		self::serveErrorPage($err);
 		exit(1);
 
 	}
 
-	static public function serveErrorPage($msg)
+	static public function serveJsonObject($msg)
 	{
-		
+
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		header('Content-type: application/json');
+
+		echo json_encode($msg);
+		exit;
+
+	}
+
+	static public function serveErrorPage($msg, $type='text')
+	{
+
 		// Protocol version (i.e. HTTP/1.0).
 		$protocol = $_SERVER['SERVER_PROTOCOL'];
-		
+
 		// Send 503 Service Temporarily Unavailable.
 		header($protocol.' 503 Service Temporarily Unavailable');
 		header('Status: 503 Service Temporarily Unavailable');
 		header('Retry-After: 3600');
-		
+
 		// Friendly error message (should be localizable!).
 		$err = 'Ett oväntat fel har uppstått, var god försök igen senare.';
-		
-		// Send it to the error template handler.
-		self::error(
-			array(
-			 'normal' => $err,
-			 'debug'  => $msg,
-			)
-		);
+
+		if ($type === 'json') {
+
+			self::serveJsonObject($msg);
+
+		} else {
+
+			// Send it to the error template handler.
+			self::error(
+				array(
+				'normal' => $err,
+				'debug'  => $msg,
+				)
+			);
+
+		}
 
 		exit(0);
 
@@ -338,24 +384,24 @@ class Request
 
 	static public function serveNotFound($msg='404 Not Found')
 	{
-		
+
 		// Server protocol (i.e. HTTP/1.0) and the requested URI.
 		$protocol = $_SERVER['SERVER_PROTOCOL'];
 		$request  = $_SERVER['REQUEST_URI'];
-		
+
 		// Return 404 Not Found.
 		header($protocol.' 404 Not Found');
 		header('Status: 404 Not Found');
-		
-		// Friendly output, should be localizable in the future! 
+
+		// Friendly output, should be localizable in the future!
 		$err  = 'Sidan <strong>'.$request.'</strong> kunde inte hittas. ';
 		$err .= 'Kontrollera att du skrivit rätt i ';
 		$err .= 'adressfältet och försök igen.';
-		
+
 		// Debug output.
 		$debug  = SYSTEM.' returned <strong>'.$msg.'</strong> ';
 		$debug .= 'on <strong>'.$request.'</strong>.';
-		
+
 		// Send it to the error template handler.
 		self::error(
 			array(
@@ -367,7 +413,7 @@ class Request
 		exit(0);
 
 	}
-	
+
 	static public function serveUnauthorized($msg='401 Unauthorized')
 	{
 
@@ -379,7 +425,7 @@ class Request
 		header($protocol.' 401 Unauthorized');
 		header('Status: 401 Unauthorized');
 
-		// Friendly output, should be localizable in the future! 
+		// Friendly output, should be localizable in the future!
 		$err  = 'Du nekas tillträde till <strong>'.$request.'</strong>. ';
 		$err .= 'Kontrollera att du är inloggad och försök igen.';
 
@@ -401,11 +447,11 @@ class Request
 
 	static protected function backtrace()
 	{
-		
+
 		// PHP backtrace.
 		$bto       = '';
 		$backtrace = debug_backtrace();
-		
+
 		// Calls to ignore/strip.
 		$ignore = array(
 		           'Request::backtrace()',
@@ -414,41 +460,41 @@ class Request
 		           'Request::error()',
     			   'Request::errorHandler()',
 		          );
-		
+
 		// Should it already be in the correct order?
 		ksort($backtrace);
-		
+
 		// For each in the backtrace.
 		foreach ($backtrace as $key => $value) {
-			
+
 			// Is this a class call? Prepend the class name!
 			if (array_key_exists('class', $value) === true) {
 
 				$call = $value['class'].'::';
-			
+
 			// Otherwise leave it blank.
 			} else {
 
 				$call = '';
 
 			}
-			
+
 			// Add the name of the method and () for the looks.
 			$call .= $value['function'].'()';
-			
+
 			// Unless this call should be skipped;
 			if (in_array($call, $ignore) === false) {
-				
+
 				// Add it to the backtrace output.
 				$bto .= '<strong>'.$call.'</strong>';
-				
+
 				// If there's a line number in the backtrace, append it!
 				if (array_key_exists('line', $value) === true) {
 
 					$bto .= ' called on line '.$value['line'];
 
 				}
-				
+
 				// If there's a filename in the backtrace, append it!
 				if (array_key_exists('file', $value) === true) {
 
@@ -456,93 +502,93 @@ class Request
 					$bto .= ' in <strong>'.$file.'</strong>';
 
 				}
-				
+
 				// Add a linebreak, should usd PHP_EOL though.
 				$bto .= "\n";
 
 			}//end if
 
 		}//end foreach
-		
-		
+
+
 		// Return the backtrace output.
 		return $bto;
 
 	}
-	
+
 	static protected function error($messages)
 	{
-		
+
 		// Let's try to display the error in-site.
 		try {
-			
+
 			// If we have our own main controller we should use it.
 			if(defined('OVERRIDE_CONTROLLER') === true) {
-				
+
 				$controller = OVERRIDE_CONTROLLER;
-			
+
 			// Otherwise, roll with heartbeat default.
 			} else {
-				
+
 				$controller = 'Controller';
-				
+
 			}
-			
+
 			// Retrieve the controller and view.
 			$controller = $controller::getInstance();
 			$view       = View::getInstance();
-			
+
 			// Debug mode?
 			if (DEBUG === true) {
-				
+
 				// Developer friendly message with backtrace.
 				$msg  = '<p>'.$messages['debug'].'</p>';
 				$msg .= '<pre><u>Backtrace</u>:'."\n".self::backtrace().'</pre>';
 
 				$view->define('errorMsg', $msg);
-			
+
 			// Otherwise;
 			} else {
-				
+
 				// User friendly message.
 				$view->define('errorMsg', '<p>'.$messages['normal'].'</p>');
 
 			}
-			
+
 			// Render error view.
 			$view->render('error');
-		
+
 		// In case something went wrong with the above code;
 		} catch (Exception $e) {
-			
+
 			// Create a new view object.
 			$view = new View;
-			
+
 			// Debug mode?
 			if (DEBUG === true) {
-				
+
 				// Developer friendly message with backtrace.
 				$msg  = '<p>'.$messages['debug'].'</p>';
 				$msg .= '<pre><u>Backtrace</u>:'."\n".self::backtrace()."\n";
-				
+
 				// Also display why in-site rendering failed.
 				$msg .= '<u>Template Engine</u>:'."\n".$e->getMessage().'</pre>';
 
 				$view->define('errorMsg', $msg);
-			
+
 			// Otherwise;
 			} else {
-				
+
 				// User friendly message.
 				$view->define('errorMsg', '<p>'.$messages['normal'].'</p>');
 
 			}
-			
+
 			// Render a simplified error page.
 			$view->render('error_simple');
 
 		}//end try
 
 	}
-	
+
 }

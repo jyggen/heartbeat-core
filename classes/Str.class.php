@@ -37,7 +37,7 @@ class Str
 		}
 
 	}
-	
+
 	static public function guid()
 	{
 
@@ -69,10 +69,10 @@ class Str
 		}//end if
 
 	}
-	
+
 	static public function slug($str, $separator='dash', $lowercase=true)
 	{
-	
+
 		if ($separator == 'dash') {
 
 			$search	 = '_';
@@ -101,7 +101,7 @@ class Str
 		foreach ($trans as $key => $val) {
 
 			$str = preg_replace("#".$key."#i", $val, $str);
-			
+
 		}
 
 		if ($lowercase === true) {
@@ -113,5 +113,5 @@ class Str
 		return trim(stripslashes($str));
 
 	}
-	
+
 }

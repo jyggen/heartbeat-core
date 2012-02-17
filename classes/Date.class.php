@@ -8,7 +8,7 @@ class Date
 		return ucwords(strftime($format, strtotime($date)));
 
 	}
-	
+
 	static public function elapsedTime($ptime)
 	{
 
@@ -22,34 +22,34 @@ class Date
 
 		if ($etime < 1) {
 
-			return '0 sekunder sedan';
+			return '0 seconds ago';
 
 		}
 
 		$a = array(
 			  31104000 => array(
-						   'år',
-						   'år',
+						   'year',
+						   'years',
 						  ),
 			  2592000  => array(
-						   'månad',
-						   'månader',
+						   'month',
+						   'months',
 						  ),
 			  86400    => array(
-						   'dag',
-						   'dagar',
+						   'day',
+						   'days',
 						  ),
 			  3600     => array(
-						   'timme',
-						   'timmar',
+						   'hour',
+						   'hours',
 						  ),
 			  60       => array(
-						   'minut',
-						   'minuter',
+						   'minute',
+						   'minutes',
 						  ),
 			  1        => array(
-						   'sekund',
-						   'sekunder',
+						   'second',
+						   'secons',
 						  ),
 			 );
 
@@ -71,7 +71,7 @@ class Date
 
 				}
 
-				return $r.' '.$str.' sedan';
+				return $r.' '.$str.' ago';
 
 			}
 

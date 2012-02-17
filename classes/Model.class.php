@@ -148,34 +148,34 @@ abstract class Model
 		$sql .= 'FROM `'.$tbl.'`'.L;
 		$sql .= 'WHERE `'.$tbl.'`.`id` = ?'.L;
 		$sql .= 'LIMIT 1';
-		
+
 		try {
 
 			$this->_data = $this->_db->query($sql, array($this->_id), true, false);
-		
+
 		} catch (Exception $e) {
-		
+
 			Request::serveErrorPage($e->getMessage());
-		
+
 		}
-		
+
 		// If the model has a *_meta table.
 		if ($this->_structure['meta'] === true) {
 
 			$sql = 'SELECT `key`, `value`
 					FROM `'.$tbl.'_meta`
 					WHERE parent_id = ?';
-			
+
 			try {
-			
+
 				$meta = $this->_db->query($sql, array($this->_id), true, false);
-			
+
 			} catch (Exception $e) {
-			
+
 				Request::serveErrorPage($e->getMessage());
-			
+
 			}
-			
+
 			foreach ($meta as $val) {
 
 				$this->_data['meta'][$val['key']] = $val['value'];
