@@ -7,10 +7,10 @@ protected $_engine;
 protected $_vars = array();
 
 protected static $_instance = false;
-	
+
 	public static function getInstance()
 	{
-	
+
 		if (self::$_instance === false) {
 
 			self::$_instance = new self();
@@ -25,7 +25,7 @@ protected static $_instance = false;
 	{
 
 		try {
-			
+
 			$this->_loader = new Twig_Loader_Filesystem(PATH_APP.'views');
 			$this->_engine = new Twig_Environment(
 				$this->_loader,
@@ -35,6 +35,8 @@ protected static $_instance = false;
 				 'strict_variables' => true,
 				)
 			);
+
+			$this->_engine->addExtension(new Twig_Extension_Debug());
 
 		} catch (Exception $e) {
 
@@ -95,30 +97,30 @@ protected static $_instance = false;
 
 	public function render($template=false)
 	{
-		
+
 		if ($template === false) {
-	
+
 			$name     = substr(Request::$controller, 0, -10);
 			$template = strtolower($name.'_'.Request::$method);
-	
+
 		}
 
 		try {
-	
+
 			$template = $this->_engine->loadTemplate($template.'.twig');
 			$output   = $template->render($this->_vars);
-			
+
 			// Fixes an issue with Twig and invalid function calls within views.
 			ob_end_clean();
-			
+
 			print $output;
-			
+
 		} catch (Exception $e) {
 
 			throw new Exception($e->getMessage());
-	
+
 		}
-	
+
 	}
-	
+
 }
