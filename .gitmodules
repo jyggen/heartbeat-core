@@ -1,3 +1,0 @@
-[submodule "libraries/jyggen"]
-	path = libraries/jyggen
-	url = git://github.com/jyggen/jyggen-s-php-libraries.git
